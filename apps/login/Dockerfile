@@ -11,10 +11,13 @@ RUN corepack enable pnpm
 # shared libraries are present). Builder stage only; the runtime stage below never
 # installs it.
 RUN apk add --no-cache openssl
-# Keep the build hermetic: no Nx remote cache, no background daemon, no TUI.
+# Keep the build hermetic: no Nx remote cache, no background daemon, no TUI. The
+# corepack prompt guard is set here because the bare pnpm RUNs below do not go
+# through Nx's nx:run-commands targetDefaults, which is where nx.json sets it.
 ENV NX_NO_CLOUD=true \
     NX_DAEMON=false \
-    NX_TUI=false
+    NX_TUI=false \
+    COREPACK_ENABLE_DOWNLOAD_PROMPT=0
 WORKDIR /build
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml nx.json .npmrc ./
 COPY proto ./proto
