@@ -155,7 +155,7 @@ export const APPEARANCE_STYLES = {
     card: "bg-[var(--glas-karte)] [backdrop-filter:blur(24px)_saturate(1.6)] border border-[var(--glas-rand-hell)] shadow-[var(--schatten-karte)]", // Frosted card surface off the token layer
     button: "bg-[var(--glas-chip)] border border-[var(--glas-rand)]", // Chip-toned secondary surface
     "idp-button": "bg-[var(--glas-kopf)] border border-[var(--glas-rand)]", // Elevated surface tone for IDP buttons
-    typography: "font-medium text-[var(--glas-text)]",
-    background: "bg-[image:var(--glas-mat)] bg-fixed", // Milchglas mat behind the whole page
+    typography: "font-medium",
+    background: "bg-transparent", // Transparent card background; the page mat is applied by the layout
   },
 } as const;

@@ -385,7 +385,11 @@ describe("Theme Configuration", () => {
     it("milchglas surfaces reference the token layer, not raw white alphas", () => {
       const serialized = JSON.stringify(APPEARANCE_STYLES.milchglas);
       expect(serialized).toContain("var(--glas-karte)");
-      expect(serialized).toContain("var(--glas-mat)");
+      expect(serialized).toContain("var(--glas-kopf)");
+      expect(serialized).toContain("var(--glas-rand)");
+      // The background key styles the card div, not the page, so it must stay transparent;
+      // the page mat is applied by the layout.
+      expect(APPEARANCE_STYLES.milchglas.background).toBe("bg-transparent");
     });
   });
 
