@@ -29,6 +29,8 @@ function getSelectedButtonStyle(isSelected: boolean): string {
   switch (themeConfig.appearance) {
     case "glass":
       return "bg-white/30 dark:bg-black/30 text-gray-900 dark:text-white shadow-lg backdrop-blur-sm border border-white/40 dark:border-white/20";
+    case "milchglas":
+      return "bg-[var(--glas-chip)] border border-[var(--glas-rand)] rounded-full";
     case "material":
       return "bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-md";
     case "flat":
