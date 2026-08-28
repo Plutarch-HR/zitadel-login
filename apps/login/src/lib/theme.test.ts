@@ -330,10 +330,11 @@ describe("Theme Configuration", () => {
   });
 
   describe("APPEARANCE_STYLES", () => {
-    it("should have flat, material, and glass appearance options", () => {
+    it("should have flat, material, glass, and milchglas appearance options", () => {
       expect(APPEARANCE_STYLES).toHaveProperty("flat");
       expect(APPEARANCE_STYLES).toHaveProperty("material");
       expect(APPEARANCE_STYLES).toHaveProperty("glass");
+      expect(APPEARANCE_STYLES).toHaveProperty("milchglas");
     });
 
     it("should have required properties for each appearance", () => {
@@ -374,6 +375,25 @@ describe("Theme Configuration", () => {
     });
   });
 
+  describe("milchglas appearance", () => {
+    it("milchglas is a valid appearance with the full key set of glass", () => {
+      const glassKeys = Object.keys(APPEARANCE_STYLES.glass).sort();
+      const milchglasKeys = Object.keys(APPEARANCE_STYLES.milchglas).sort();
+      expect(milchglasKeys).toEqual(glassKeys);
+    });
+
+    it("milchglas surfaces reference the token layer, not raw white alphas", () => {
+      const serialized = JSON.stringify(APPEARANCE_STYLES.milchglas);
+      expect(serialized).toContain("var(--glas-karte)");
+      expect(serialized).toContain("var(--glas-kopf)");
+      expect(serialized).toContain("var(--glas-rand)");
+      // The background key styles the card div, not the page (the page mat is applied by the
+      // layout). It must carry the same frosted surface as the card key, because card.tsx puts
+      // both on one element and a bg-transparent here would win on stylesheet order.
+      expect(APPEARANCE_STYLES.milchglas.background).toBe("bg-[var(--glas-karte)]");
+    });
+  });
+
   describe("Type Safety", () => {
     it("should accept valid ThemeRoundness values", () => {
       const validValues: ThemeRoundness[] = ["edgy", "mid", "full"];
@@ -390,9 +410,9 @@ describe("Theme Configuration", () => {
     });
 
     it("should accept valid ThemeAppearance values", () => {
-      const validValues: ThemeAppearance[] = ["flat", "material", "glass"];
+      const validValues: ThemeAppearance[] = ["flat", "material", "glass", "milchglas"];
       validValues.forEach((value) => {
-        expect(["flat", "material", "glass"]).toContain(value);
+        expect(["flat", "material", "glass", "milchglas"]).toContain(value);
       });
     });
 

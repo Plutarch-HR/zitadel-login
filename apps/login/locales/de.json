@@ -458,5 +458,27 @@
     "failedLoading": "Daten konnten nicht geladen werden. Bitte versuchen Sie es erneut.",
     "tryagain": "Erneut versuchen",
     "couldNotContinueSession": "Sitzung konnte nicht fortgesetzt werden - fehlende Benutzerinformationen"
+  },
+  "plutarch": {
+    "authMethods": {
+      "totp": "Authenticator-App",
+      "u2f": "Sicherheitsschlüssel (U2F)",
+      "emailCode": "Code per E-Mail",
+      "smsCode": "Code per SMS",
+      "passkeys": "Passkeys"
+    },
+    "session": {
+      "expires": "Läuft {time} ab",
+      "internalError": "Ein interner Fehler ist aufgetreten"
+    },
+    "aria": {
+      "themeLight": "Zum hellen Modus wechseln",
+      "themeDark": "Zum dunklen Modus wechseln",
+      "themeSystem": "Dem Systemmodus folgen",
+      "logo": "Organisationslogo",
+      "avatar": "Profilbild",
+      "appAvatar": "Anwendungslogo",
+      "methodChoice": "Anmeldemethode"
+    }
   }
 }

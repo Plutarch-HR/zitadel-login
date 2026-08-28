@@ -9,6 +9,11 @@ vi.mock("next-themes", () => ({
   }),
 }));
 
+// Mock next-intl
+vi.mock("next-intl", () => ({
+  useTranslations: () => (key: string) => key,
+}));
+
 // Mock next/image
 vi.mock("next/image", () => ({
   default: ({ src, alt }: { src: string; alt: string }) => <img src={src} alt={alt} />,

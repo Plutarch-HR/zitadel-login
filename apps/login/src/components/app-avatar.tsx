@@ -1,4 +1,5 @@
 import { ColorShade, getColorHash } from "@/helpers/colors";
+import { useTranslations } from "next-intl";
 import { useTheme } from "next-themes";
 import { getInitials } from "./avatar";
 
@@ -10,6 +11,7 @@ interface AvatarProps {
 
 export function AppAvatar({ appName, imageUrl, shadow }: AvatarProps) {
   const { resolvedTheme } = useTheme();
+  const t = useTranslations("plutarch");
   const credentials = getInitials(appName, appName);
 
   const color: ColorShade = getColorHash(appName);
@@ -35,7 +37,7 @@ export function AppAvatar({ appName, imageUrl, shadow }: AvatarProps) {
         <img
           height={48}
           width={48}
-          alt="avatar"
+          alt={t("aria.appAvatar")}
           className="border-divider-light dark:border-divider-dark h-full w-full rounded-full border"
           src={imageUrl}
         />

@@ -21,7 +21,9 @@ export function AuthenticationMethodRadio({
     <div className="w-full">
       <div className="mx-auto w-full max-w-md">
         <RadioGroup value={selected} onChange={selectionChanged}>
-          <Label className="sr-only">Server size</Label>
+          <Label className="sr-only">
+            <Translated i18nKey="aria.methodChoice" namespace="plutarch" />
+          </Label>
           <div className="flex flex-row space-x-4">
             {methods.map((method) => (
               <Radio

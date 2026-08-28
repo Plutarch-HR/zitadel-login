@@ -21,9 +21,9 @@ export type TextInputProps = DetailedHTMLProps<InputHTMLAttributes<HTMLInputElem
 const styles = (error: boolean, disabled: boolean, roundnessClasses: string = "rounded-md") =>
   clsx(
     {
-      "h-[40px] mb-[2px] p-[7px] bg-input-light-background dark:bg-input-dark-background transition-colors duration-300 grow": true,
-      "border border-input-light-border dark:border-input-dark-border hover:border-black hover:dark:border-white focus:border-primary-light-500 focus:dark:border-primary-dark-500": true,
-      "focus:outline-none focus:ring-0 text-base text-black dark:text-white placeholder:italic placeholder-gray-700 dark:placeholder-gray-700": true,
+      "h-[40px] mb-[2px] p-[7px] bg-[var(--glas-chip)] transition-colors duration-300 grow": true,
+      "border border-[var(--glas-rand)] focus:border-[var(--indigo)] focus:ring-1 focus:ring-[var(--indigo)]": true,
+      "focus:outline-none text-base text-[var(--glas-text)] placeholder:italic placeholder:text-[var(--glas-blass)]": true,
       "border border-warn-light-500 dark:border-warn-dark-500 hover:border-warn-light-500 hover:dark:border-warn-dark-500 focus:border-warn-light-500 focus:dark:border-warn-dark-500":
         error,
       "pointer-events-none text-gray-500 dark:text-gray-800 border border-input-light-border dark:border-input-dark-border hover:border-light-hoverborder hover:dark:border-hoverborder cursor-default":
@@ -59,8 +59,8 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
     const actualRoundness = roundness || getDefaultInputRoundness();
 
     return (
-      <label className="text-12px text-input-light-label dark:text-input-dark-label relative flex flex-col">
-        <span className={`mb-1 leading-3 ${error ? "text-warn-light-500 dark:text-warn-dark-500" : ""}`}>
+      <label className="text-12px relative flex flex-col text-[var(--glas-gedimmt)]">
+        <span className={`mb-1 leading-3 ${error ? "text-[var(--ziegel-text)]" : ""}`}>
           {label} {required && "*"}
         </span>
         <input
@@ -89,7 +89,7 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
           </span>
         )}
 
-        <div className="leading-14.5px h-14.5px text-12px text-warn-light-500 dark:text-warn-dark-500 flex flex-row items-center">
+        <div className="leading-14.5px h-14.5px text-12px flex flex-row items-center text-[var(--ziegel-text)]">
           <span>{error ? error : " "}</span>
         </div>
 

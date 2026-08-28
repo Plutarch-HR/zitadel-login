@@ -2,7 +2,7 @@
 
 export type ThemeRoundness = "edgy" | "mid" | "full";
 export type ThemeLayout = "side-by-side" | "top-to-bottom";
-export type ThemeAppearance = "flat" | "material" | "glass";
+export type ThemeAppearance = "flat" | "material" | "glass" | "milchglas";
 export type ThemeSpacing = "regular" | "compact";
 
 export interface ComponentRoundnessConfig {
@@ -150,5 +150,16 @@ export const APPEARANCE_STYLES = {
       "backdrop-blur-sm bg-white/20 dark:bg-black/20 border border-white/30 dark:border-white/20 shadow-lg hover:shadow-xl", // Glass effect for IDP buttons
     typography: "font-medium",
     background: "bg-transparent", // Transparent background to show blur effect
+  },
+  milchglas: {
+    card: "bg-[var(--glas-karte)] [backdrop-filter:blur(24px)_saturate(1.6)] border border-[var(--glas-rand-hell)] shadow-[var(--schatten-karte)]", // Frosted card surface off the token layer
+    button: "bg-[var(--glas-chip)] border border-[var(--glas-rand)]", // Chip-toned secondary surface
+    "idp-button": "bg-[var(--glas-kopf)] border border-[var(--glas-rand)]", // Elevated surface tone for IDP buttons
+    typography: "font-medium",
+    // card.tsx composes background + card onto the same div, so this key must carry the SAME
+    // frosted surface as card rather than bg-transparent: two colliding background-color
+    // utilities resolve by stylesheet order, and bg-transparent won. The card key keeps its
+    // own copy because theme-switch.tsx and language-switcher.tsx read card standalone.
+    background: "bg-[var(--glas-karte)]", // Frosted card surface; the page mat is applied by the layout
   },
 } as const;

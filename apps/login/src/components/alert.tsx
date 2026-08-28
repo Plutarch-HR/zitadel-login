@@ -12,11 +12,10 @@ export enum AlertType {
   INFO,
 }
 
-const yellow =
-  "border-yellow-600/40 dark:border-yellow-500/20 bg-yellow-200/30 text-yellow-600 dark:bg-yellow-700/20 dark:text-yellow-200";
+const yellow = "bg-[#F7EEDD] border border-[#B4690E]/30 text-[#8A5210] dark:bg-[rgba(180,105,14,0.15)] dark:text-[#E0A64A]";
 // const red =
 //   "border-red-600/40 dark:border-red-500/20 bg-red-200/30 text-red-600 dark:bg-red-700/20 dark:text-red-200";
-const neutral = "border-divider-light dark:border-divider-dark bg-black/5 text-gray-600 dark:bg-white/10 dark:text-gray-200";
+const neutral = "bg-[var(--glas-chip)] border border-[var(--glas-rand)] text-[var(--glas-text)]";
 
 export function Alert({ children, type = AlertType.ALERT }: Props) {
   return (

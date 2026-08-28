@@ -458,5 +458,27 @@
     "failedLoading": "Failed to load data. Please try again.",
     "tryagain": "Try Again",
     "couldNotContinueSession": "Could not continue with session - missing user information"
+  },
+  "plutarch": {
+    "authMethods": {
+      "totp": "Authenticator app",
+      "u2f": "Security key (U2F)",
+      "emailCode": "Code via email",
+      "smsCode": "Code via SMS",
+      "passkeys": "Passkeys"
+    },
+    "session": {
+      "expires": "Expires {time}",
+      "internalError": "An internal error occurred"
+    },
+    "aria": {
+      "themeLight": "Switch to light mode",
+      "themeDark": "Switch to dark mode",
+      "themeSystem": "Follow the system mode",
+      "logo": "Organization logo",
+      "avatar": "Profile picture",
+      "appAvatar": "Application logo",
+      "methodChoice": "Sign-in method"
+    }
   }
 }

@@ -1,6 +1,7 @@
 import "@/styles/globals.scss";
 
 import { BackgroundWrapper } from "@/components/background-wrapper";
+import { DefaultTags } from "@/components/default-tags";
 import { LanguageProvider } from "@/components/language-provider";
 import { LanguageSwitcher } from "@/components/language-switcher";
 import { Skeleton } from "@/components/skeleton";
@@ -12,14 +13,8 @@ import { getAllowedLanguages } from "@/lib/zitadel";
 import * as Tooltip from "@radix-ui/react-tooltip";
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
-import { Lato } from "next/font/google";
 import { headers } from "next/headers";
 import React, { Suspense } from "react";
-
-const lato = Lato({
-  weight: ["400", "700", "900"],
-  subsets: ["latin"],
-});
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("common");
@@ -43,15 +38,17 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   }
 
   return (
-    <html className={`${lato.className}`} suppressHydrationWarning>
-      <head />
+    <html className="font-body" suppressHydrationWarning>
+      <head>
+        <DefaultTags />
+      </head>
       <body>
         <ThemeProvider>
           <Tooltip.Provider>
             <Suspense
               fallback={
                 <BackgroundWrapper
-                  className={`bg-background-light-600 dark:bg-background-dark-600 relative flex min-h-screen flex-col justify-center`}
+                  className={`relative flex min-h-screen flex-col justify-center bg-[image:var(--glas-mat)] bg-fixed text-[var(--glas-text)]`}
                 >
                   <div className="relative mx-auto w-full max-w-[440px] py-8">
                     <Skeleton>
@@ -66,7 +63,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             >
               <LanguageProvider>
                 <BackgroundWrapper
-                  className={`bg-background-light-600 dark:bg-background-dark-600 relative flex min-h-screen flex-col justify-center`}
+                  className={`relative flex min-h-screen flex-col justify-center bg-[image:var(--glas-mat)] bg-fixed text-[var(--glas-text)]`}
                 >
                   <div className="relative mx-auto w-full max-w-[1100px] py-8">
                     <div>{children}</div>

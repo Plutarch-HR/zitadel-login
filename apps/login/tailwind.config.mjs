@@ -51,10 +51,21 @@ export default {
         "12px": "12px",
         "14px": "14px",
       },
+      // Milchglas typefaces, self-hosted via @fontsource in globals.scss
+      fontFamily: {
+        body: ["Instrument Sans Variable", "Segoe UI", "sans-serif"],
+        display: ["Fraunces Variable", "Georgia", "serif"],
+        mono: ["Spline Sans Mono", "Cascadia Mono", "monospace"],
+      },
       colors: {
         gray: colors.zinc,
         // Dynamic theme colors
         ...themeColors,
+        // Milchglas brand aliases (Ch. 08 palette)
+        "indigo-brand": "#4F52C9",
+        "indigo-tief": "#3D40B0",
+        "indigo-hell": "#5A5DD6",
+        "ziegel": "#B3402F",
         // State colors
         state: {
           success: {
