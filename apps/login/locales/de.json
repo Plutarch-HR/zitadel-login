@@ -468,14 +468,14 @@
       "passkeys": "Passkeys"
     },
     "session": {
-      "expires": "Läuft ab {time}",
+      "expires": "Läuft {time} ab",
       "internalError": "Ein interner Fehler ist aufgetreten"
     },
     "aria": {
       "themeLight": "Zum hellen Modus wechseln",
       "themeDark": "Zum dunklen Modus wechseln",
       "themeSystem": "Dem Systemmodus folgen",
-      "logo": "Plutarch",
+      "logo": "Organisationslogo",
       "avatar": "Profilbild",
       "appAvatar": "Anwendungslogo",
       "methodChoice": "Anmeldemethode"
