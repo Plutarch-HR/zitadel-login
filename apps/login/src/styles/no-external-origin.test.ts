@@ -4,6 +4,9 @@ import { describe, expect, test } from "vitest";
 
 // R-LOGSURF-03: no asset, font, script, style, or beacon loads from any origin
 // other than the login application's own. Google Fonts is the canonical violation.
+// The walk covers the whole app root, not just src/, so the root config files
+// (next.config.mjs, tailwind.config.mjs, postcss.config.cjs) are guarded too.
+// Residual, checked by hand at cutover: public/ binaries and locales/*.json.
 const APP_ROOT = join(__dirname, "..", "..");
 
 function walk(dir: string, out: string[] = []): string[] {
@@ -18,7 +21,7 @@ function walk(dir: string, out: string[] = []): string[] {
 
 describe("no external origins", () => {
   test("next/font/google is gone and no fonts.googleapis reference exists", () => {
-    for (const file of walk(join(APP_ROOT, "src"))) {
+    for (const file of walk(APP_ROOT)) {
       const text = readFileSync(file, "utf8");
       expect(text, file).not.toContain("next/font/google");
       expect(text, file).not.toContain("fonts.googleapis.com");
