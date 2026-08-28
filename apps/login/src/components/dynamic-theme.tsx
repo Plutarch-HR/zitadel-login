@@ -57,7 +57,7 @@ export function DynamicTheme({
                     <div className="flex w-1/2 flex-col justify-center border-r border-[var(--glas-rand)] bg-[var(--glas-kopf)] p-4 lg:p-8">
                       <div className="mx-auto max-w-[440px] space-y-8">
                         {/* Logo and branding */}
-                        {branding?.lightTheme?.logoUrl ? (
+                        {branding?.lightTheme?.logoUrl || branding?.darkTheme?.logoUrl ? (
                           <Logo
                             lightSrc={branding.lightTheme?.logoUrl}
                             darkSrc={branding.darkTheme?.logoUrl}
@@ -103,7 +103,7 @@ export function DynamicTheme({
                 <Card>
                   <div className="mx-auto flex flex-col items-center space-y-8">
                     <div className="relative flex flex-row items-center justify-center">
-                      {branding?.lightTheme?.logoUrl ? (
+                      {branding?.lightTheme?.logoUrl || branding?.darkTheme?.logoUrl ? (
                         <Logo
                           lightSrc={branding.lightTheme?.logoUrl}
                           darkSrc={branding.darkTheme?.logoUrl}

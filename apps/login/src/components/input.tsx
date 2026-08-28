@@ -22,7 +22,7 @@ const styles = (error: boolean, disabled: boolean, roundnessClasses: string = "r
   clsx(
     {
       "h-[40px] mb-[2px] p-[7px] bg-[var(--glas-chip)] transition-colors duration-300 grow": true,
-      "border border-[var(--glas-rand)] rounded-[10px] focus:border-[var(--indigo)] focus:ring-1 focus:ring-[var(--indigo)]": true,
+      "border border-[var(--glas-rand)] focus:border-[var(--indigo)] focus:ring-1 focus:ring-[var(--indigo)]": true,
       "focus:outline-none text-base text-[var(--glas-text)] placeholder:italic placeholder:text-[var(--glas-blass)]": true,
       "border border-warn-light-500 dark:border-warn-dark-500 hover:border-warn-light-500 hover:dark:border-warn-dark-500 focus:border-warn-light-500 focus:dark:border-warn-dark-500":
         error,
@@ -60,7 +60,7 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
 
     return (
       <label className="text-12px relative flex flex-col text-[var(--glas-gedimmt)]">
-        <span className={`mb-1 leading-3 ${error ? "text-[var(--ziegel,#B3402F)]" : ""}`}>
+        <span className={`mb-1 leading-3 ${error ? "text-[var(--ziegel-text)]" : ""}`}>
           {label} {required && "*"}
         </span>
         <input
@@ -89,7 +89,7 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
           </span>
         )}
 
-        <div className="leading-14.5px h-14.5px text-12px flex flex-row items-center text-[var(--ziegel,#B3402F)]">
+        <div className="leading-14.5px h-14.5px text-12px flex flex-row items-center text-[var(--ziegel-text)]">
           <span>{error ? error : " "}</span>
         </div>
 
