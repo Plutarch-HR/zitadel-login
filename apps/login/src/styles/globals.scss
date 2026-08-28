@@ -2,6 +2,15 @@
 @use "tailwindcss";
 @config "../../tailwind.config.mjs";
 
+// Milchglas token layer plus the three self-hosted platform typefaces. Every URL
+// below ends in .css so Sass passes it through as a plain CSS import and the
+// bundler resolves each stylesheet (and its own font files) same-origin.
+@import "./milchglas.tokens.css";
+@import "@fontsource-variable/instrument-sans/index.css";
+@import "@fontsource-variable/fraunces/index.css";
+@import "@fontsource/spline-sans-mono/400.css";
+@import "@fontsource/spline-sans-mono/500.css";
+
 @layer base {
   h1,
   .ztdl-h1 {
