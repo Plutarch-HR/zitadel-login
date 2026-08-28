@@ -45,19 +45,24 @@ def transform(source_text: str) -> str:
 
 
 def main() -> None:
+    if sys.version_info < (3, 10):
+        sys.exit("python >= 3.10 required")
     parser = argparse.ArgumentParser()
     parser.add_argument("--source", required=True, type=Path)
-    parser.add_argument("--out", type=Path)
-    parser.add_argument("--check", type=Path)
+    mode = parser.add_mutually_exclusive_group(required=True)
+    mode.add_argument("--out", type=Path)
+    mode.add_argument("--check", type=Path)
     args = parser.parse_args()
     generated = transform(args.source.read_text(encoding="utf-8"))
     if args.check:
-        if args.check.read_text(encoding="utf-8") != generated:
+        try:
+            current = args.check.read_text(encoding="utf-8")
+        except OSError as exc:
+            sys.exit(f"cannot read {args.check}: {exc}")
+        if current != generated:
             sys.exit(f"{args.check} is stale; regenerate with --out")
         print("tokens in sync")
         return
-    if not args.out:
-        sys.exit("one of --out or --check is required")
     args.out.write_text(generated, encoding="utf-8", newline="\n")
     print(f"wrote {args.out}")
 
