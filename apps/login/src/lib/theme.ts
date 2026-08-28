@@ -156,6 +156,10 @@ export const APPEARANCE_STYLES = {
     button: "bg-[var(--glas-chip)] border border-[var(--glas-rand)]", // Chip-toned secondary surface
     "idp-button": "bg-[var(--glas-kopf)] border border-[var(--glas-rand)]", // Elevated surface tone for IDP buttons
     typography: "font-medium",
-    background: "bg-transparent", // Transparent card background; the page mat is applied by the layout
+    // card.tsx composes background + card onto the same div, so this key must carry the SAME
+    // frosted surface as card rather than bg-transparent: two colliding background-color
+    // utilities resolve by stylesheet order, and bg-transparent won. The card key keeps its
+    // own copy because theme-switch.tsx and language-switcher.tsx read card standalone.
+    background: "bg-[var(--glas-karte)]", // Frosted card surface; the page mat is applied by the layout
   },
 } as const;
