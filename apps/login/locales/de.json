@@ -464,7 +464,8 @@
       "totp": "Authenticator-App",
       "u2f": "Sicherheitsschlüssel (U2F)",
       "emailCode": "Code per E-Mail",
-      "smsCode": "Code per SMS"
+      "smsCode": "Code per SMS",
+      "passkeys": "Passkeys"
     },
     "session": {
       "expires": "Läuft ab {time}",
@@ -474,9 +475,6 @@
       "themeLight": "Zum hellen Modus wechseln",
       "themeDark": "Zum dunklen Modus wechseln",
       "themeSystem": "Dem Systemmodus folgen",
-      "otpInput": "Einmalcode",
-      "newPassword": "Neues Passwort",
-      "verifyCode": "Bestätigungscode",
       "logo": "Plutarch",
       "avatar": "Profilbild",
       "appAvatar": "Anwendungslogo",

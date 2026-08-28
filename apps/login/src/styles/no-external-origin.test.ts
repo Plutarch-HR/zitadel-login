@@ -49,6 +49,8 @@ describe("no hardcoded UI literals", () => {
         ">Universal Second Factor<",
         ">Code via Email<",
         ">Code via SMS<",
+        ">Passkeys<",
+        ">Password<",
         "Server size",
         '"An internal error occurred"',
       ])
