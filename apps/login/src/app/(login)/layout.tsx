@@ -24,6 +24,7 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const _headers = await headers();
   const { serviceConfig } = getServiceConfig(_headers);
+  const tTheme = await getTranslations("plutarch");
 
   let languages = LANGS;
   try {
@@ -36,6 +37,14 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   } catch (e) {
     console.error("Failed to load supported languages", e);
   }
+
+  // Resolved server-side so ThemeSwitch stays renderable inside the Suspense
+  // fallback, which mounts outside the NextIntlClientProvider.
+  const themeSwitchLabels = {
+    light: tTheme("aria.themeLight"),
+    system: tTheme("aria.themeSystem"),
+    dark: tTheme("aria.themeDark"),
+  };
 
   return (
     <html className="font-body" suppressHydrationWarning>
@@ -55,7 +64,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
                       <div className="h-40"></div>
                     </Skeleton>
                     <div className="flex flex-row items-center justify-end space-x-4 py-4">
-                      <ThemeSwitch />
+                      <ThemeSwitch labels={themeSwitchLabels} />
                     </div>
                   </div>
                 </BackgroundWrapper>
@@ -69,7 +78,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
                     <div>{children}</div>
                     <div className="mx-auto flex max-w-[440px] flex-row items-center justify-end space-x-4 px-4 py-4 md:max-w-full md:px-8">
                       <LanguageSwitcher languages={languages} />
-                      <ThemeSwitch />
+                      <ThemeSwitch labels={themeSwitchLabels} />
                     </div>
                   </div>
                 </BackgroundWrapper>
