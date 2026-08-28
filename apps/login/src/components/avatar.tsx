@@ -2,6 +2,7 @@
 
 import { ColorShade, getColorHash } from "@/helpers/colors";
 import { getComponentRoundness } from "@/lib/theme";
+import { useTranslations } from "next-intl";
 import { useTheme } from "next-themes";
 
 interface AvatarProps {
@@ -37,6 +38,7 @@ function getAvatarRoundness(): string {
 
 export function Avatar({ size = "base", name, loginName, imageUrl, shadow }: AvatarProps) {
   const { resolvedTheme } = useTheme();
+  const t = useTranslations("plutarch");
   const credentials = getInitials(name ?? loginName, loginName);
   const avatarRoundness = getAvatarRoundness();
 
@@ -71,7 +73,7 @@ export function Avatar({ size = "base", name, loginName, imageUrl, shadow }: Ava
         <img
           height={48}
           width={48}
-          alt="avatar"
+          alt={t("aria.avatar")}
           className={`border-divider-light dark:border-divider-dark h-full w-full border ${avatarRoundness}`}
           src={imageUrl}
         />

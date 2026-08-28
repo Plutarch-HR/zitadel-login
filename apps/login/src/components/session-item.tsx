@@ -8,7 +8,7 @@ import * as Tooltip from "@radix-ui/react-tooltip";
 import { Timestamp, timestampDate } from "@zitadel/client";
 import { Session } from "@zitadel/proto/zitadel/session/v2/session_pb";
 import moment from "moment";
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { AutoSubmitForm } from "./auto-submit-form";
@@ -33,6 +33,8 @@ export function isSessionPrimaryFactorAndLifetimeValid(session: Partial<Session>
 
 export function SessionItem({ session, reload, requestId }: { session: Session; reload: () => void; requestId?: string }) {
   const currentLocale = useLocale();
+  const t = useTranslations("plutarch");
+  const internalErrorMessage = t("session.internalError");
   moment.locale(currentLocale === "zh" ? "zh-cn" : currentLocale);
 
   const [_loading, setLoading] = useState<boolean>(false);
@@ -86,7 +88,7 @@ export function SessionItem({ session, reload, requestId }: { session: Session; 
 
                 handleServerActionResponse(res, router, setSamlData, (e) => setError(e));
               } catch {
-                setError("An internal error occurred");
+                setError(internalErrorMessage);
               } finally {
                 setLoading(false);
               }
@@ -146,7 +148,7 @@ export function SessionItem({ session, reload, requestId }: { session: Session; 
             className="bg-background-light-500 dark:bg-background-dark-500 z-50 rounded-md border px-3 py-2 text-xs text-black shadow-xl select-none dark:border-white/20 dark:text-white"
             sideOffset={5}
           >
-            Expires {moment(timestampDate(session.expirationDate)).fromNow()}
+            {t("session.expires", { time: moment(timestampDate(session.expirationDate)).fromNow() })}
             <Tooltip.Arrow className="fill-white dark:fill-white/20" />
           </Tooltip.Content>
         </Tooltip.Portal>

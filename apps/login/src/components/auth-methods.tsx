@@ -3,6 +3,7 @@ import { clsx } from "clsx";
 import Link from "next/link";
 import { ReactNode } from "react";
 import { BadgeState, StateBadge } from "./state-badge";
+import { Translated } from "./translated";
 
 const cardClasses = (alreadyAdded: boolean) =>
   clsx(
@@ -32,7 +33,7 @@ export const TOTP = (alreadyAdded: boolean, link: string) => {
           <title>timer-lock-outline</title>
           <path d="M11 8H13V14H11V8M13 19.92C12.67 19.97 12.34 20 12 20C8.13 20 5 16.87 5 13S8.13 6 12 6C14.82 6 17.24 7.67 18.35 10.06C18.56 10.04 18.78 10 19 10C19.55 10 20.07 10.11 20.57 10.28C20.23 9.22 19.71 8.24 19.03 7.39L20.45 5.97C20 5.46 19.55 5 19.04 4.56L17.62 6C16.07 4.74 14.12 4 12 4C7.03 4 3 8.03 3 13S7.03 22 12 22C12.42 22 12.83 21.96 13.24 21.91C13.09 21.53 13 21.12 13 20.7V19.92M15 1H9V3H15V1M23 17.3V20.8C23 21.4 22.4 22 21.7 22H16.2C15.6 22 15 21.4 15 20.7V17.2C15 16.6 15.6 16 16.2 16V14.5C16.2 13.1 17.6 12 19 12S21.8 13.1 21.8 14.5V16C22.4 16 23 16.6 23 17.3M20.5 14.5C20.5 13.7 19.8 13.2 19 13.2S17.5 13.7 17.5 14.5V16H20.5V14.5Z" />
         </svg>{" "}
-        <span>Authenticator App</span>
+        <Translated i18nKey="authMethods.totp" namespace="plutarch" />
       </div>
       {alreadyAdded && (
         <>
@@ -61,7 +62,7 @@ export const U2F = (alreadyAdded: boolean, link: string) => {
             d="M7.864 4.243A7.5 7.5 0 0119.5 10.5c0 2.92-.556 5.709-1.568 8.268M5.742 6.364A7.465 7.465 0 004.5 10.5a7.464 7.464 0 01-1.15 3.993m1.989 3.559A11.209 11.209 0 008.25 10.5a3.75 3.75 0 117.5 0c0 .527-.021 1.049-.064 1.565M12 10.5a14.94 14.94 0 01-3.6 9.75m6.633-4.596a18.666 18.666 0 01-2.485 5.33"
           />
         </svg>
-        <span>Universal Second Factor</span>
+        <Translated i18nKey="authMethods.u2f" namespace="plutarch" />
       </div>
       {alreadyAdded && (
         <>
@@ -91,7 +92,7 @@ export const EMAIL = (alreadyAdded: boolean, link: string) => {
           />
         </svg>
 
-        <span>Code via Email</span>
+        <Translated i18nKey="authMethods.emailCode" namespace="plutarch" />
       </div>
       {alreadyAdded && (
         <>
@@ -120,7 +121,7 @@ export const SMS = (alreadyAdded: boolean, link: string) => {
             d="M10.5 1.5H8.25A2.25 2.25 0 006 3.75v16.5a2.25 2.25 0 002.25 2.25h7.5A2.25 2.25 0 0018 20.25V3.75a2.25 2.25 0 00-2.25-2.25H13.5m-3 0V3h3V1.5m-3 0h3m-3 18.75h3"
           />
         </svg>
-        <span>Code via SMS</span>
+        <Translated i18nKey="authMethods.smsCode" namespace="plutarch" />
       </div>
       {alreadyAdded && (
         <>

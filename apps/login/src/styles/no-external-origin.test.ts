@@ -34,3 +34,25 @@ describe("no external origins", () => {
     expect(layout).toContain("font-body");
   });
 });
+
+describe("no hardcoded UI literals", () => {
+  const files = [
+    "components/auth-methods.tsx",
+    "components/authentication-method-radio.tsx",
+    "components/session-item.tsx",
+  ].map((f) => join(APP_ROOT, "src", f));
+  test("known hardcoded strings are gone", () => {
+    for (const f of files) {
+      const text = readFileSync(f, "utf8");
+      for (const literal of [
+        ">Authenticator App<",
+        ">Universal Second Factor<",
+        ">Code via Email<",
+        ">Code via SMS<",
+        "Server size",
+        '"An internal error occurred"',
+      ])
+        expect(text, f).not.toContain(literal);
+    }
+  });
+});
