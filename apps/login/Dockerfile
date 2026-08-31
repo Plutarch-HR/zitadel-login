@@ -45,6 +45,10 @@ RUN addgroup --system --gid 1001 nodejs && \
 # If /.env-file/.env is mounted into the container, its variables are made available to the server before it starts up.
 RUN mkdir -p /.env-file && touch /.env-file/.env && chown -R nextjs:nodejs /.env-file
 COPY --from=builder --chown=nextjs:nodejs /build/apps/login/.next/standalone ./
+# Standalone output does not include the public/ directory, so the favicon set and
+# manifest referenced by DefaultTags would 404 without this copy. The server serves
+# it from the app directory beside server.js.
+COPY --from=builder --chown=nextjs:nodejs /build/apps/login/public ./apps/login/public
 USER nextjs
 ENV HOSTNAME="::" \
     PORT="3000" \
