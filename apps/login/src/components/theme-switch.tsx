@@ -39,6 +39,9 @@ function getSelectedButtonStyle(isSelected: boolean): string {
   }
 }
 
+// Keyboard focus indicator shared by the three mode buttons (WCAG 2.4.7).
+const FOCUS_RING = "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--indigo)]";
+
 // Labels are passed in from the server layout rather than read via useTranslations,
 // because the layout mounts this component inside a Suspense fallback that renders
 // outside the NextIntlClientProvider.
@@ -64,21 +67,21 @@ export default function ThemeSwitch({ labels }: { labels: { light: string; syste
   return (
     <div className={`flex space-x-1 p-1 ${toggleRoundness} ${cardAppearance}`}>
       <button
-        className={`flex h-8 w-8 flex-row items-center justify-center ${toggleRoundness} transition-colors ${getSelectedButtonStyle(theme === "light")}`}
+        className={`flex h-8 w-8 flex-row items-center justify-center ${toggleRoundness} transition-colors ${FOCUS_RING} ${getSelectedButtonStyle(theme === "light")}`}
         onClick={() => setTheme("light")}
         aria-label={labels.light}
       >
         <SunIcon className="h-5 w-5" />
       </button>
       <button
-        className={`flex h-8 w-8 flex-row items-center justify-center ${toggleRoundness} transition-colors ${getSelectedButtonStyle(theme === "system")}`}
+        className={`flex h-8 w-8 flex-row items-center justify-center ${toggleRoundness} transition-colors ${FOCUS_RING} ${getSelectedButtonStyle(theme === "system")}`}
         onClick={() => setTheme("system")}
         aria-label={labels.system}
       >
         <ComputerDesktopIcon className="h-4 w-4" />
       </button>
       <button
-        className={`flex h-8 w-8 flex-row items-center justify-center ${toggleRoundness} transition-colors ${getSelectedButtonStyle(theme === "dark")}`}
+        className={`flex h-8 w-8 flex-row items-center justify-center ${toggleRoundness} transition-colors ${FOCUS_RING} ${getSelectedButtonStyle(theme === "dark")}`}
         onClick={() => setTheme("dark")}
         aria-label={labels.dark}
       >
