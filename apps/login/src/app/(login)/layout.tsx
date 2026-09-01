@@ -57,7 +57,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             <Suspense
               fallback={
                 <BackgroundWrapper
-                  className={`relative flex min-h-screen flex-col justify-center bg-[image:var(--glas-mat)] bg-fixed text-[var(--glas-text)]`}
+                  className={`relative flex min-h-screen flex-col justify-center-safe bg-[image:var(--glas-mat)] bg-fixed text-[var(--glas-text)]`}
                 >
                   <div className="relative mx-auto w-full max-w-[440px] py-8">
                     <Skeleton>
@@ -72,7 +72,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             >
               <LanguageProvider>
                 <BackgroundWrapper
-                  className={`relative flex min-h-screen flex-col justify-center bg-[image:var(--glas-mat)] bg-fixed text-[var(--glas-text)]`}
+                  className={`relative flex min-h-screen flex-col justify-center-safe bg-[image:var(--glas-mat)] bg-fixed text-[var(--glas-text)]`}
                 >
                   <div className="relative mx-auto w-full max-w-[1100px] py-8">
                     <div>{children}</div>

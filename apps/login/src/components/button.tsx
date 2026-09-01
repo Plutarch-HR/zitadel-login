@@ -35,7 +35,10 @@ export const getButtonClasses = (
 ) =>
   clsx(
     {
-      "box-border leading-36px text-14px inline-flex items-center focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--indigo)] focus-visible:outline-offset-2 transition-colors transition-shadow duration-300": true,
+      // Deliberately no outline suppression here: in Tailwind v4 that utility sets
+      // `--tw-outline-style: none`, which the `focus-visible:outline-*` utilities resolve
+      // through, so the keyboard focus ring would never paint (WCAG 2.4.7).
+      "box-border leading-36px text-14px inline-flex items-center focus-visible:outline-2 focus-visible:outline-[var(--indigo)] focus-visible:outline-offset-2 transition-colors transition-shadow duration-300": true,
       "disabled:border-none disabled:bg-none disabled:bg-gray-300 disabled:text-gray-600 disabled:shadow-none disabled:cursor-not-allowed disabled:dark:bg-gray-700 disabled:dark:text-gray-900":
         variant === ButtonVariants.Primary,
       "bg-[linear-gradient(135deg,var(--indigo-tile-a),var(--indigo))] text-white shadow-[var(--schatten-indigo)] hover:brightness-108 active:scale-[0.96]":

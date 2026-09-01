@@ -59,10 +59,23 @@ export function PasswordForm({ loginSettings, loginName, organization, defaultOr
         requestId,
       });
 
-      handleServerActionResponse(response, router, setSamlData, setError);
+      // The form stays mounted while the router navigates to the next step, so the
+      // submit button must stay disabled once a navigation (or SAML auto-post) is
+      // underway - otherwise a second click fires the server action again.
+      // handleServerActionResponse returns false when nothing was handled, and
+      // surfaces every non-navigating outcome through setError, so an inline error
+      // is the signal that the form is still interactive.
+      let inlineError = false;
+      const handled = handleServerActionResponse(response, router, setSamlData, (message) => {
+        inlineError = true;
+        setError(message);
+      });
+
+      if (!handled || inlineError) {
+        setLoading(false);
+      }
     } catch {
       setError(t("verify.errors.couldNotVerifyPassword"));
-    } finally {
       setLoading(false);
     }
   }
@@ -155,7 +168,7 @@ export function PasswordForm({ loginSettings, loginName, organization, defaultOr
             type="submit"
             className="self-end"
             variant={ButtonVariants.Primary}
-            disabled={loading || !formState.isValid}
+            disabled={loading || formState.isSubmitting || !formState.isValid}
             onClick={handleSubmit(submitPassword)}
             data-testid="submit-button"
           >

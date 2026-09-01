@@ -47,7 +47,7 @@ export function LanguageSwitcher({ languages }: { languages: Lang[] }) {
           className={clsx(
             `relative block w-full py-1.5 pr-8 pl-3 text-left text-sm/6 text-black dark:text-white ${switcherRoundness}`,
             cardAppearance,
-            "focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2 data-[focus]:outline-white/25",
+            "focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-[var(--indigo)] data-[focus]:outline-2 data-[focus]:-outline-offset-2 data-[focus]:outline-[var(--indigo)]",
           )}
         >
           {selected.name}
@@ -57,7 +57,7 @@ export function LanguageSwitcher({ languages }: { languages: Lang[] }) {
           anchor="bottom"
           transition
           className={clsx(
-            `bg-background-light-500 dark:bg-background-dark-500 w-[var(--button-width)] rounded-md border border-black/5 p-1 [--anchor-gap:var(--spacing-1)] focus:outline-none dark:border-white/5`,
+            `bg-background-light-500 dark:bg-background-dark-500 w-[var(--button-width)] rounded-md border border-black/5 p-1 [--anchor-gap:var(--spacing-1)] focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-[var(--indigo)] dark:border-white/5`,
             "transition duration-100 ease-in data-[leave]:data-[closed]:opacity-0",
           )}
         >
