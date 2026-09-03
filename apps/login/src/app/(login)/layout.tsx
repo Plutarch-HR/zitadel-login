@@ -63,7 +63,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
                     <Skeleton>
                       <div className="h-40"></div>
                     </Skeleton>
-                    <div className="flex flex-row items-center justify-end space-x-4 py-4">
+                    <div className="mx-auto flex max-w-[440px] flex-row items-center justify-end px-4 py-4">
                       <ThemeSwitch labels={themeSwitchLabels} />
                     </div>
                   </div>
@@ -76,7 +76,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
                 >
                   <div className="relative mx-auto w-full max-w-[1100px] py-8">
                     <div>{children}</div>
-                    <div className="mx-auto flex max-w-[440px] flex-row items-center justify-end space-x-4 px-4 py-4 md:max-w-full md:px-8">
+                    {/* The controls belong to the card, so they stay in the card's 440px
+                        column instead of widening to the 1100px shell container. */}
+                    <div className="mx-auto flex max-w-[440px] flex-row items-center justify-between px-4 py-4">
                       <LanguageSwitcher languages={languages} />
                       <ThemeSwitch labels={themeSwitchLabels} />
                     </div>
