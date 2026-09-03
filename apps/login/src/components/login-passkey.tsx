@@ -31,6 +31,10 @@ export function LoginPasskey({ loginName, sessionId, requestId, altPassword, org
   const [error, setError] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const [samlData, setSamlData] = useState<{ url: string; fields: Record<string, string> } | null>(null);
+  // Drives the wait notice only. It is not `loading`: after a handled redirect the
+  // button must stay disabled while the page navigates away, but the ceremony is
+  // over by then, so asking the person to confirm on their device would be a lie.
+  const [waiting, setWaiting] = useState<boolean>(false);
 
   const t = useTranslations("passkey");
   const router = useRouter();
@@ -54,14 +58,16 @@ export function LoginPasskey({ loginName, sessionId, requestId, altPassword, org
 
   // One passkey run: request a challenge, then hand it to the authenticator.
   // `loading` is raised once here and only lowered again on a path that leaves the
-  // component interactive, so the button stays disabled and the wait notice stays
-  // up for the whole WebAuthn ceremony, which can take seconds on a slow device.
+  // component interactive, so the button stays disabled for the whole run. `waiting`
+  // tracks the ceremony itself, which can take seconds on a slow device, and is
+  // dropped as soon as the run settles however it settles.
   async function startCeremony() {
     if (ceremonyInFlight.current) {
       return;
     }
     ceremonyInFlight.current = true;
     setLoading(true);
+    setWaiting(true);
 
     try {
       const response = await updateOrCreateSessionForChallenge();
@@ -79,6 +85,7 @@ export function LoginPasskey({ loginName, sessionId, requestId, altPassword, org
       setLoading(false);
     } finally {
       ceremonyInFlight.current = false;
+      setWaiting(false);
     }
   }
 
@@ -209,11 +216,11 @@ export function LoginPasskey({ loginName, sessionId, requestId, altPassword, org
           <Alert>{error}</Alert>
         </div>
       )}
-      {loading && (
-        <div className="mt-4 text-sm opacity-80" role="status" aria-live="polite" data-testid="passkey-status">
-          <Translated i18nKey="verify.waitingForDevice" namespace="passkey" />
-        </div>
-      )}
+      {/* The live region is always mounted and only its text is toggled. A live region
+          inserted together with its content is routinely missed by screen readers. */}
+      <div className="mt-4 text-sm opacity-80 empty:mt-0" role="status" aria-live="polite" data-testid="passkey-status">
+        {waiting && <Translated i18nKey="verify.waitingForDevice" namespace="passkey" />}
+      </div>
       <div className="mt-8 flex w-full flex-row items-center">
         {altPassword ? (
           <Button

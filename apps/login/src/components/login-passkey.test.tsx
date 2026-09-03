@@ -582,6 +582,25 @@ describe("LoginPasskey Component", () => {
       expect(screen.getByTestId("submit-button")).toBeDisabled();
     });
 
+    test("drops the wait notice once the redirect is handled but keeps the button disabled", async () => {
+      challengeWithPublicKey();
+      mockCredentialsGet.mockResolvedValue(assertedCredential());
+      mockSendPasskey.mockResolvedValue({ redirect: "/success" });
+
+      renderWithIntl(<LoginPasskey loginName="test@example.com" altPassword={false} />);
+
+      await waitFor(() => {
+        expect(mockPush).toHaveBeenCalledWith("/success");
+      });
+
+      // The ceremony is over and the page is navigating away, so asking the person to
+      // confirm on their device would be a lie, but the button must not become live again.
+      await waitFor(() => {
+        expect(screen.getByTestId("passkey-status")).toBeEmptyDOMElement();
+      });
+      expect(screen.getByTestId("submit-button")).toBeDisabled();
+    });
+
     test("re-enables the submit button and drops the wait notice when the ceremony is cancelled", async () => {
       challengeWithPublicKey();
 
@@ -596,7 +615,9 @@ describe("LoginPasskey Component", () => {
       });
 
       expect(screen.getByTestId("submit-button")).not.toBeDisabled();
-      expect(screen.queryByTestId("passkey-status")).not.toBeInTheDocument();
+      // The live region stays mounted so screen readers keep watching it; only its
+      // text goes away once the ceremony is over.
+      expect(screen.getByTestId("passkey-status")).toBeEmptyDOMElement();
     });
   });
 });

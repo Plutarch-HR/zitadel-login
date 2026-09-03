@@ -29,13 +29,27 @@ describe("login shell reflow", () => {
 // pushed the pickers into the far bottom right corner of the viewport, detached
 // from the 440px card they belong to.
 describe("login shell control row", () => {
-  const controlRows = () =>
-    readFileSync(LAYOUT, "utf8")
-      .split("\n")
-      .filter((line) => line.includes("flex-row") && line.includes("py-4"));
+  const lines = () => readFileSync(LAYOUT, "utf8").split("\n");
+
+  // Line numbers of the opening tags of the two control rows.
+  const controlRowStarts = () =>
+    lines()
+      .map((line, index) => ({ line, index }))
+      .filter(({ line }) => line.includes("flex-row") && line.includes("py-4"))
+      .map(({ index }) => index);
+
+  // The children of one control row: everything between its opening tag and the
+  // first line that closes it again.
+  const controlRowChildren = (start: number) => {
+    const all = lines();
+    const end = all.findIndex((line, index) => index > start && line.includes("</div>"));
+    expect(end).toBeGreaterThan(start);
+    return all.slice(start + 1, end);
+  };
 
   test("both control rows stay in the 440px card column", () => {
-    const rows = controlRows();
+    const all = lines();
+    const rows = controlRowStarts().map((index) => all[index]);
 
     // One for the Suspense fallback, one for the live tree.
     expect(rows).toHaveLength(2);
@@ -47,15 +61,21 @@ describe("login shell control row", () => {
   });
 
   test("the live control row seats language left and theme right", () => {
-    const text = readFileSync(LAYOUT, "utf8");
-    const rows = controlRows();
-    const live = rows.find((row) => row.includes("justify-between"));
+    const all = lines();
+    const start = controlRowStarts().find((index) => all[index].includes("justify-between"));
 
-    expect(live).toBeDefined();
-    expect(live).toContain("max-w-[440px]");
+    expect(start).toBeDefined();
+    expect(all[start!]).toContain("max-w-[440px]");
 
     // LanguageSwitcher first, ThemeSwitch second, so the row reads left to right.
-    expect(text.indexOf("<LanguageSwitcher")).toBeGreaterThan(-1);
-    expect(text.indexOf("<LanguageSwitcher")).toBeLessThan(text.lastIndexOf("<ThemeSwitch"));
+    // Scoped to this row's own children, so the ThemeSwitch in the Suspense
+    // fallback row cannot stand in for this row's own.
+    const children = controlRowChildren(start!);
+    const language = children.findIndex((line) => line.includes("<LanguageSwitcher"));
+    const theme = children.findIndex((line) => line.includes("<ThemeSwitch"));
+
+    expect(language).toBeGreaterThan(-1);
+    expect(theme).toBeGreaterThan(-1);
+    expect(language).toBeLessThan(theme);
   });
 });

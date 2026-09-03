@@ -269,7 +269,7 @@
       "description": "A készüléked az ujjlenyomatodat, arcodat vagy a képernyőzárat fogja kérni",
       "usePassword": "Jelszó használata",
       "submit": "Tovább",
-      "waitingForDevice": "Kérjük, erősítse meg az eszközével. Ez eltarthat egy pillanatig.",
+      "waitingForDevice": "Erősítsd meg az eszközöddel. Ez eltarthat egy pillanatig.",
       "errors": {
         "couldNotRequestChallenge": "Nem sikerült elindítani a jelkulcsos azonosítást",
         "couldNotVerifyPasskey": "Nem sikerült ellenőrizni a jelkulcsot",
