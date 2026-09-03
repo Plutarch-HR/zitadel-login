@@ -31,45 +31,63 @@ export function LoginPasskey({ loginName, sessionId, requestId, altPassword, org
   const [error, setError] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const [samlData, setSamlData] = useState<{ url: string; fields: Record<string, string> } | null>(null);
+  // Drives the wait notice only. It is not `loading`: after a handled redirect the
+  // button must stay disabled while the page navigates away, but the ceremony is
+  // over by then, so asking the person to confirm on their device would be a lie.
+  const [waiting, setWaiting] = useState<boolean>(false);
 
   const t = useTranslations("passkey");
   const router = useRouter();
 
   const initialized = useRef(false);
+  // True from the moment a ceremony run starts until it settles. The disabled
+  // attribute alone cannot carry this: a click can land in the render gap between
+  // starting a ceremony and the state commit that disables the button. A second
+  // navigator.credentials.get while the first is still pending makes the browser
+  // reject one of them, which surfaced as a bogus verification failure while the
+  // first ceremony was still on its way to a successful login.
+  const ceremonyInFlight = useRef(false);
 
   useEffect(() => {
     if (!initialized.current) {
       initialized.current = true;
-      setLoading(true);
-      updateOrCreateSessionForChallenge()
-        .then((response) => {
-          const pK = response?.challenges?.webAuthN?.publicKeyCredentialRequestOptions?.publicKey;
-
-          if (!pK) {
-            setError(t("verify.errors.couldNotRequestChallenge"));
-            setLoading(false);
-            return;
-          }
-
-          return submitLoginAndContinue(pK)
-            .catch((error) => {
-              setError(error instanceof Error ? error.message : String(error));
-              return;
-            })
-            .finally(() => {
-              setLoading(false);
-            });
-        })
-        .catch((error) => {
-          setError(error instanceof Error ? error.message : String(error));
-          return;
-        })
-        .finally(() => {
-          setLoading(false);
-        });
+      startCeremony();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // One passkey run: request a challenge, then hand it to the authenticator.
+  // `loading` is raised once here and only lowered again on a path that leaves the
+  // component interactive, so the button stays disabled for the whole run. `waiting`
+  // tracks the ceremony itself, which can take seconds on a slow device, and is
+  // dropped as soon as the run settles however it settles.
+  async function startCeremony() {
+    if (ceremonyInFlight.current) {
+      return;
+    }
+    ceremonyInFlight.current = true;
+    setLoading(true);
+    setWaiting(true);
+
+    try {
+      const response = await updateOrCreateSessionForChallenge();
+      const pK = response?.challenges?.webAuthN?.publicKeyCredentialRequestOptions?.publicKey;
+
+      if (!pK) {
+        setError(t("verify.errors.couldNotRequestChallenge"));
+        setLoading(false);
+        return;
+      }
+
+      await submitLoginAndContinue(pK);
+    } catch (error) {
+      setError(error instanceof Error ? error.message : String(error));
+      setLoading(false);
+    } finally {
+      ceremonyInFlight.current = false;
+      setWaiting(false);
+    }
+  }
 
   async function updateOrCreateSessionForChallenge(
     userVerificationRequirement: number = login
@@ -77,7 +95,6 @@ export function LoginPasskey({ loginName, sessionId, requestId, altPassword, org
       : UserVerificationRequirement.DISCOURAGED,
   ) {
     setError("");
-    setLoading(true);
     const sessionResponse = await updateOrCreateSession({
       loginName,
       sessionId,
@@ -89,15 +106,11 @@ export function LoginPasskey({ loginName, sessionId, requestId, altPassword, org
         },
       }),
       requestId,
-    })
-      .catch((error) => {
-        console.error(error);
-        setError(t("verify.errors.couldNotRequestChallenge"));
-        return;
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+    }).catch((error) => {
+      console.error(error);
+      setError(t("verify.errors.couldNotRequestChallenge"));
+      return;
+    });
 
     if (sessionResponse && "error" in sessionResponse && sessionResponse.error) {
       setError(sessionResponse.error);
@@ -108,7 +121,6 @@ export function LoginPasskey({ loginName, sessionId, requestId, altPassword, org
   }
 
   async function submitLogin(data: JsonObject) {
-    setLoading(true);
     try {
       const response = await sendPasskey({
         loginName,
@@ -120,7 +132,16 @@ export function LoginPasskey({ loginName, sessionId, requestId, altPassword, org
         requestId,
       });
 
-      const handled = handleServerActionResponse(response, router, setSamlData, setError);
+      // The component stays mounted while the router navigates to the next step, so
+      // the button must stay disabled once a navigation (or SAML auto-post) is
+      // underway. handleServerActionResponse returns false when nothing was handled
+      // and surfaces every non-navigating outcome through setError, so an inline
+      // error is the signal that the component is interactive again.
+      let inlineError = false;
+      const handled = handleServerActionResponse(response, router, setSamlData, (message) => {
+        inlineError = true;
+        setError(message);
+      });
 
       if (!handled) {
         if (!response) {
@@ -129,9 +150,12 @@ export function LoginPasskey({ loginName, sessionId, requestId, altPassword, org
           setError(t("verify.errors.noRedirectProvided"));
         }
       }
+
+      if (!handled || inlineError) {
+        setLoading(false);
+      }
     } catch {
       setError(t("verify.errors.couldNotVerifyPasskey"));
-    } finally {
       setLoading(false);
     }
   }
@@ -149,6 +173,7 @@ export function LoginPasskey({ loginName, sessionId, requestId, altPassword, org
       .then((assertedCredential: any) => {
         if (!assertedCredential) {
           setError(t("verify.errors.couldNotRetrievePasskey"));
+          setLoading(false);
           return;
         }
 
@@ -179,8 +204,6 @@ export function LoginPasskey({ loginName, sessionId, requestId, altPassword, org
           setError(t("verify.errors.verificationFailed"));
         }
         console.error("Passkey verification error:", error);
-      })
-      .finally(() => {
         setLoading(false);
       });
   }
@@ -193,6 +216,11 @@ export function LoginPasskey({ loginName, sessionId, requestId, altPassword, org
           <Alert>{error}</Alert>
         </div>
       )}
+      {/* The live region is always mounted and only its text is toggled. A live region
+          inserted together with its content is routinely missed by screen readers. */}
+      <div className="mt-4 text-sm opacity-80 empty:mt-0" role="status" aria-live="polite" data-testid="passkey-status">
+        {waiting && <Translated i18nKey="verify.waitingForDevice" namespace="passkey" />}
+      </div>
       <div className="mt-8 flex w-full flex-row items-center">
         {altPassword ? (
           <Button
@@ -235,29 +263,7 @@ export function LoginPasskey({ loginName, sessionId, requestId, altPassword, org
           className="self-end"
           variant={ButtonVariants.Primary}
           disabled={loading}
-          onClick={async () => {
-            const response = await updateOrCreateSessionForChallenge().finally(() => {
-              setLoading(false);
-            });
-
-            const pK = response?.challenges?.webAuthN?.publicKeyCredentialRequestOptions?.publicKey;
-
-            if (!pK) {
-              setError(t("verify.errors.couldNotRequestChallenge"));
-              return;
-            }
-
-            setLoading(true);
-
-            return submitLoginAndContinue(pK)
-              .catch((error) => {
-                setError(error instanceof Error ? error.message : String(error));
-                return;
-              })
-              .finally(() => {
-                setLoading(false);
-              });
-          }}
+          onClick={() => startCeremony()}
           data-testid="submit-button"
         >
           {loading && <Spinner className="mr-2 h-5 w-5" />} <Translated i18nKey="verify.submit" namespace="passkey" />

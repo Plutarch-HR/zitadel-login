@@ -269,6 +269,7 @@
       "description": "سيطلب جهازك بصمة إصبعك، أو وجهك، أو قفل الشاشة",
       "usePassword": "استخدم كلمة المرور",
       "submit": "متابعة",
+      "waitingForDevice": "يرجى التأكيد باستخدام جهازك. قد يستغرق ذلك لحظة.",
       "errors": {
         "couldNotRequestChallenge": "تعذر طلب تحدي مفتاح المرور",
         "couldNotVerifyPasskey": "تعذر التحقق من مفتاح المرور",

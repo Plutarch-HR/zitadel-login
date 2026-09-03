@@ -262,6 +262,7 @@
       "description": "デバイスが指紋、顔、または画面ロックの入力を求めます",
       "usePassword": "パスワードを使用",
       "submit": "続行",
+      "waitingForDevice": "お使いのデバイスで確認してください。少し時間がかかる場合があります。",
       "errors": {
         "couldNotRequestChallenge": "パスキーチャレンジを要求できませんでした",
         "couldNotVerifyPasskey": "パスキーを確認できませんでした",

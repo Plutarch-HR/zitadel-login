@@ -269,6 +269,7 @@
       "description": "您的设备将请求指纹、面部识别或屏幕锁",
       "usePassword": "使用密码",
       "submit": "继续",
+      "waitingForDevice": "请在您的设备上确认。这可能需要一点时间。",
       "errors": {
         "couldNotRequestChallenge": "无法请求密钥挑战",
         "couldNotVerifyPasskey": "无法验证密钥",

@@ -269,6 +269,7 @@
       "description": "Tu dispositivo pedirá tu huella digital, rostro o bloqueo de pantalla",
       "usePassword": "Usar contraseña",
       "submit": "Continuar",
+      "waitingForDevice": "Confirma con tu dispositivo. Esto puede tardar un momento.",
       "errors": {
         "couldNotRequestChallenge": "No se pudo solicitar el desafío de clave de acceso",
         "couldNotVerifyPasskey": "No se pudo verificar la clave de acceso",

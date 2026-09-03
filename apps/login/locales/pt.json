@@ -269,6 +269,7 @@
       "description": "Seu dispositivo solicitará sua impressão digital, rosto ou bloqueio de tela",
       "usePassword": "Usar senha",
       "submit": "Continuar",
+      "waitingForDevice": "Confirme com o seu dispositivo. Isto pode demorar um momento.",
       "errors": {
         "couldNotRequestChallenge": "Não foi possível solicitar desafio da chave de acesso",
         "couldNotVerifyPasskey": "Não foi possível verificar a chave de acesso",

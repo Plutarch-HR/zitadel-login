@@ -269,6 +269,7 @@
       "description": "Twoje urządzenie poprosi o użycie odcisku palca, rozpoznawania twarzy lub blokady ekranu.",
       "usePassword": "Użyj hasła",
       "submit": "Kontynuuj",
+      "waitingForDevice": "Potwierdź na swoim urządzeniu. Może to chwilę potrwać.",
       "errors": {
         "couldNotRequestChallenge": "Nie można zażądać wyzwania klucza dostępu",
         "couldNotVerifyPasskey": "Nie można zweryfikować klucza dostępu",

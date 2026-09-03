@@ -1,6 +1,6 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { act, cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { NextIntlClientProvider } from "next-intl";
-import { beforeEach, describe, expect, test, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import { LoginPasskey } from "./login-passkey";
 
 // Mock next/navigation
@@ -40,6 +40,7 @@ describe("LoginPasskey Component", () => {
         description: "Your device will ask for your fingerprint",
         usePassword: "Use password",
         submit: "Continue",
+        waitingForDevice: "Please confirm with your device. This can take a moment.",
         errors: {
           couldNotRequestChallenge: "Could not request passkey challenge",
           couldNotVerifyPasskey: "Could not verify passkey",
@@ -71,6 +72,12 @@ describe("LoginPasskey Component", () => {
 
     mockSendPasskey = vi.mocked(sendPasskey);
     mockUpdateSession = vi.mocked(updateOrCreateSession);
+  });
+
+  // Vitest runs without globals here, so testing-library's automatic cleanup is
+  // never registered and renders would otherwise pile up in the same document.
+  afterEach(() => {
+    cleanup();
   });
 
   describe("Initialization and Challenge Request", () => {
@@ -436,6 +443,181 @@ describe("LoginPasskey Component", () => {
 
       // Should still only be called once
       expect(mockUpdateSession).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe("Ceremony Feedback", () => {
+    const WAITING = "Please confirm with your device. This can take a moment.";
+
+    const challengeWithPublicKey = () =>
+      mockUpdateSession.mockResolvedValue({
+        challenges: {
+          webAuthN: {
+            publicKeyCredentialRequestOptions: {
+              publicKey: {
+                challenge: new Uint8Array([1, 2, 3]),
+                allowCredentials: [{ id: new Uint8Array([4, 5, 6]), type: "public-key" }],
+              },
+            },
+          },
+        },
+      });
+
+    const assertedCredential = () => ({
+      id: "credential-id",
+      rawId: new ArrayBuffer(8),
+      type: "public-key",
+      response: {
+        authenticatorData: new ArrayBuffer(8),
+        clientDataJSON: new ArrayBuffer(8),
+        signature: new ArrayBuffer(8),
+        userHandle: new ArrayBuffer(8),
+      },
+    });
+
+    // A ceremony the test controls: navigator.credentials.get stays pending until
+    // the returned settle function is called, which is what the WebAuthn dialog
+    // does while it waits for the person to touch their key or unlock the device.
+    const pendingCeremony = () => {
+      let settle!: (value: unknown) => void;
+      mockCredentialsGet.mockReturnValue(
+        new Promise((resolve) => {
+          settle = resolve;
+        }),
+      );
+      return async (value: unknown = null) => {
+        await act(async () => {
+          settle(value);
+        });
+      };
+    };
+
+    test("keeps the submit button disabled and announces the wait while the ceremony is pending", async () => {
+      challengeWithPublicKey();
+      const finish = pendingCeremony();
+
+      renderWithIntl(<LoginPasskey loginName="test@example.com" altPassword={false} />);
+
+      await waitFor(() => {
+        expect(mockCredentialsGet).toHaveBeenCalled();
+      });
+
+      const button = screen.getByTestId("submit-button");
+      expect(button).toBeDisabled();
+      // The Spinner also carries role="status", so it is matched by tag, not by role.
+      expect(button.querySelector("svg.animate-spin")).toBeInTheDocument();
+
+      const status = screen.getByTestId("passkey-status");
+      expect(status).toHaveAttribute("role", "status");
+      expect(status).toHaveAttribute("aria-live", "polite");
+      expect(status).toHaveTextContent(WAITING);
+
+      await finish();
+    });
+
+    test("a click while a ceremony is pending starts no second ceremony and reports no error", async () => {
+      challengeWithPublicKey();
+      const finish = pendingCeremony();
+
+      renderWithIntl(<LoginPasskey loginName="test@example.com" altPassword={false} />);
+
+      await waitFor(() => {
+        expect(mockCredentialsGet).toHaveBeenCalledTimes(1);
+      });
+      expect(mockUpdateSession).toHaveBeenCalledTimes(1);
+
+      fireEvent.click(screen.getByTestId("submit-button"));
+      await act(async () => {});
+
+      expect(mockUpdateSession).toHaveBeenCalledTimes(1);
+      expect(mockCredentialsGet).toHaveBeenCalledTimes(1);
+      expect(screen.queryByText("An error occurred during passkey verification")).not.toBeInTheDocument();
+
+      await finish();
+    });
+
+    test("two clicks inside one render pass start only one ceremony", async () => {
+      challengeWithPublicKey();
+
+      const notAllowedError = new Error("User cancelled");
+      (notAllowedError as any).name = "NotAllowedError";
+      mockCredentialsGet.mockRejectedValueOnce(notAllowedError);
+
+      renderWithIntl(<LoginPasskey loginName="test@example.com" altPassword={false} />);
+
+      await waitFor(() => {
+        expect(screen.getByText("Passkey verification was cancelled")).toBeInTheDocument();
+      });
+
+      const button = screen.getByTestId("submit-button");
+      expect(button).not.toBeDisabled();
+
+      const finish = pendingCeremony();
+
+      // Both clicks are dispatched on the DOM node inside a single act pass, so the
+      // second one lands in the render gap where the button is not yet disabled.
+      await act(async () => {
+        button.click();
+        button.click();
+      });
+
+      expect(mockCredentialsGet).toHaveBeenCalledTimes(2); // the cancelled one plus exactly one retry
+      expect(mockUpdateSession).toHaveBeenCalledTimes(2);
+      expect(screen.queryByText("An error occurred during passkey verification")).not.toBeInTheDocument();
+
+      await finish();
+    });
+
+    test("keeps the submit button disabled after a successful verification redirects", async () => {
+      challengeWithPublicKey();
+      mockCredentialsGet.mockResolvedValue(assertedCredential());
+      mockSendPasskey.mockResolvedValue({ redirect: "/success" });
+
+      renderWithIntl(<LoginPasskey loginName="test@example.com" altPassword={false} />);
+
+      await waitFor(() => {
+        expect(mockPush).toHaveBeenCalledWith("/success");
+      });
+
+      expect(screen.getByTestId("submit-button")).toBeDisabled();
+    });
+
+    test("drops the wait notice once the redirect is handled but keeps the button disabled", async () => {
+      challengeWithPublicKey();
+      mockCredentialsGet.mockResolvedValue(assertedCredential());
+      mockSendPasskey.mockResolvedValue({ redirect: "/success" });
+
+      renderWithIntl(<LoginPasskey loginName="test@example.com" altPassword={false} />);
+
+      await waitFor(() => {
+        expect(mockPush).toHaveBeenCalledWith("/success");
+      });
+
+      // The ceremony is over and the page is navigating away, so asking the person to
+      // confirm on their device would be a lie, but the button must not become live again.
+      await waitFor(() => {
+        expect(screen.getByTestId("passkey-status")).toBeEmptyDOMElement();
+      });
+      expect(screen.getByTestId("submit-button")).toBeDisabled();
+    });
+
+    test("re-enables the submit button and drops the wait notice when the ceremony is cancelled", async () => {
+      challengeWithPublicKey();
+
+      const notAllowedError = new Error("User cancelled");
+      (notAllowedError as any).name = "NotAllowedError";
+      mockCredentialsGet.mockRejectedValue(notAllowedError);
+
+      renderWithIntl(<LoginPasskey loginName="test@example.com" altPassword={false} />);
+
+      await waitFor(() => {
+        expect(screen.getByText("Passkey verification was cancelled")).toBeInTheDocument();
+      });
+
+      expect(screen.getByTestId("submit-button")).not.toBeDisabled();
+      // The live region stays mounted so screen readers keep watching it; only its
+      // text goes away once the ceremony is over.
+      expect(screen.getByTestId("passkey-status")).toBeEmptyDOMElement();
     });
   });
 });

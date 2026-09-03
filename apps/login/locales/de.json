@@ -269,6 +269,7 @@
       "description": "Ihr Gerät wird nach Ihrem Fingerabdruck, Gesicht oder Bildschirmsperre fragen",
       "usePassword": "Passwort verwenden",
       "submit": "Weiter",
+      "waitingForDevice": "Bitte bestätigen Sie mit Ihrem Gerät. Das kann einen Moment dauern.",
       "errors": {
         "couldNotRequestChallenge": "Passkey-Challenge konnte nicht angefordert werden",
         "couldNotVerifyPasskey": "Passkey konnte nicht verifiziert werden",
