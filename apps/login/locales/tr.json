@@ -269,6 +269,7 @@
       "description": "Cihazınız parmak izinizi, yüzünüzü veya ekran kilidinizi isteyecektir",
       "usePassword": "Şifre kullan",
       "submit": "Devam",
+      "waitingForDevice": "Lütfen cihazınızla onaylayın. Bu biraz zaman alabilir.",
       "errors": {
         "couldNotRequestChallenge": "Passkey meydan okuması istenemedi",
         "couldNotVerifyPasskey": "Passkey doğrulanamadı",

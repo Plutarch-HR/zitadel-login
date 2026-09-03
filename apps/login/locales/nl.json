@@ -269,6 +269,7 @@
       "description": "Jouw apparaat vraagt om jouw vingerafdruk, gezicht of schermvergrendeling",
       "usePassword": "Gebruik wachtwoord",
       "submit": "Doorgaan",
+      "waitingForDevice": "Bevestig met jouw apparaat. Dit kan even duren.",
       "errors": {
         "couldNotRequestChallenge": "Kon passkey-uitdaging niet aanvragen",
         "couldNotVerifyPasskey": "Kon passkey niet verifiëren",

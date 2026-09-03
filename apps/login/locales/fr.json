@@ -269,6 +269,7 @@
       "description": "Votre appareil vous demandera votre empreinte digitale, votre visage ou votre verrouillage d'écran",
       "usePassword": "Utiliser un mot de passe",
       "submit": "Continuer",
+      "waitingForDevice": "Veuillez confirmer avec votre appareil. Cela peut prendre un moment.",
       "errors": {
         "couldNotRequestChallenge": "Impossible de demander le défi de la clé d'accès",
         "couldNotVerifyPasskey": "Impossible de vérifier la clé d'accès",

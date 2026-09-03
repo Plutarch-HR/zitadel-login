@@ -269,6 +269,7 @@
       "description": "Il tuo dispositivo chiederà la tua impronta digitale, il volto o il blocco schermo",
       "usePassword": "Usa password",
       "submit": "Continua",
+      "waitingForDevice": "Conferma con il tuo dispositivo. Potrebbe richiedere un momento.",
       "errors": {
         "couldNotRequestChallenge": "Impossibile richiedere la sfida passkey",
         "couldNotVerifyPasskey": "Impossibile verificare la passkey",
