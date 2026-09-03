@@ -6,6 +6,10 @@ import { useTheme } from "next-themes";
 import { ReactNode, useEffect, useLayoutEffect } from "react";
 import { setThemeMode } from "./branding-context";
 
+// Written next to the theme value whenever branding forces LIGHT or DARK, so a later
+// AUTO mount can tell an instance-forced value apart from the person's own choice.
+const FORCED_THEME_MARKER = "cp-theme-forced";
+
 type Props = {
   branding: BrandingSettings | undefined;
   children: ReactNode;
@@ -93,6 +97,7 @@ export const ThemeWrapper = ({ children, branding }: Props) => {
           document.documentElement.classList.remove("dark");
           try {
             localStorage.setItem("cp-theme", "light");
+            localStorage.setItem(FORCED_THEME_MARKER, "1");
           } catch {
             /* localStorage unavailable (e.g. private mode) */
           }
@@ -102,6 +107,7 @@ export const ThemeWrapper = ({ children, branding }: Props) => {
           document.documentElement.classList.add("dark");
           try {
             localStorage.setItem("cp-theme", "dark");
+            localStorage.setItem(FORCED_THEME_MARKER, "1");
           } catch {
             /* localStorage unavailable (e.g. private mode) */
           }
@@ -109,9 +115,28 @@ export const ThemeWrapper = ({ children, branding }: Props) => {
           break;
         case ThemeMode.AUTO:
         case ThemeMode.UNSPECIFIED:
-        default:
-          setNextTheme("system");
+        default: {
+          // This effect runs on every page mount. Calling setNextTheme here
+          // unconditionally made next-themes rewrite the stored value, so a choice
+          // made on the username page was gone again on the password page. A stored
+          // value belongs to the person and is left alone. The one exception is a
+          // value this instance forced while it was in LIGHT or DARK mode: clear the
+          // marker and reset once, so switching an instance back to AUTO does not
+          // strand everyone on the theme it used to force.
+          let wasForced = false;
+          try {
+            wasForced = localStorage.getItem(FORCED_THEME_MARKER) !== null;
+            if (wasForced) {
+              localStorage.removeItem(FORCED_THEME_MARKER);
+            }
+          } catch {
+            /* localStorage unavailable (e.g. private mode) */
+          }
+          if (wasForced) {
+            setNextTheme("system");
+          }
           break;
+        }
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
