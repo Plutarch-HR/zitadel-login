@@ -30,17 +30,17 @@ export type ColorMap = {
   [_key in MapName]: Color[];
 };
 
-export const DARK_PRIMARY = "#9FA2F0";
-export const PRIMARY = "#4F52C9";
+export const DARK_PRIMARY = "#82B1FF";
+export const PRIMARY = "#2464D5";
 
 export const DARK_WARN = "#E08471";
 export const WARN = "#B3402F";
 
-export const DARK_BACKGROUND = "#171512";
-export const BACKGROUND = "#FAF9F5";
+export const DARK_BACKGROUND = "#171B20";
+export const BACKGROUND = "#F5F7F9";
 
-export const DARK_TEXT = "#FAF9F5";
-export const TEXT = "#1C1E2E";
+export const DARK_TEXT = "#EDF1F5";
+export const TEXT = "#202A35";
 
 export type LabelPolicyColors = {
   backgroundColor: string;
