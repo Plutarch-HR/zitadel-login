@@ -26,12 +26,11 @@ html {
   --dark-background-color: #000000;
 }
 
-// The page mat. The login layout paints the same image on its full-height
+// The page mat. The login layout paints the same colour on its full-height
 // wrapper; this rule keeps overscroll and anything outside that wrapper on the
 // platform palette instead of the browser default white.
 body {
-  background-image: var(--glas-mat);
-  background-attachment: fixed;
+  background-color: var(--glas-mat);
   color: var(--glas-text);
 }
 
