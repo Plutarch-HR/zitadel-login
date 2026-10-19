@@ -2,12 +2,11 @@
 @use "tailwindcss";
 @config "../../tailwind.config.mjs";
 
-// Milchglas token layer plus the three self-hosted platform typefaces. Every URL
+// Token layer plus the self-hosted platform typefaces. Every URL
 // below ends in .css so Sass passes it through as a plain CSS import and the
 // bundler resolves each stylesheet (and its own font files) same-origin.
 @import "./milchglas.tokens.css";
 @import "@fontsource-variable/instrument-sans/index.css";
-@import "@fontsource-variable/fraunces/index.css";
 @import "@fontsource/spline-sans-mono/400.css";
 @import "@fontsource/spline-sans-mono/500.css";
 
@@ -27,12 +26,11 @@ html {
   --dark-background-color: #000000;
 }
 
-// The page mat. The login layout paints the same image on its full-height
+// The page mat. The login layout paints the same colour on its full-height
 // wrapper; this rule keeps overscroll and anything outside that wrapper on the
-// Milchglas palette instead of the browser default white.
+// platform palette instead of the browser default white.
 body {
-  background-image: var(--glas-mat);
-  background-attachment: fixed;
+  background-color: var(--glas-mat);
   color: var(--glas-text);
 }
 
@@ -40,8 +38,8 @@ body {
   position: relative;
 }
 
-// Indigo is the platform action hue in both schemes, so the checked box needs no
-// dark-mode counterpart rule.
+// The action tokens flip on .dark, so the checked box needs no dark-mode
+// counterpart rule.
 .form-checkbox:checked {
   background-image: none !important;
   background-color: var(--indigo);
@@ -58,9 +56,9 @@ body {
   mask-size: 100% 100%;
   -webkit-mask-repeat: no-repeat;
   mask-repeat: no-repeat;
-  // The box is indigo in both schemes now, so the mark is the ratified white cut
-  // rather than a contrast colour derived from the branding primary.
-  background-color: #ffffff;
+  // The scheme's own label colour on the primary action: white in light mode, deep
+  // ink on the light dark-mode action, never a colour derived from the branding primary.
+  background-color: var(--indigo-tile-text);
 }
 
 // One rule for both schemes: the glas tokens already flip on .dark, so a second

@@ -388,7 +388,7 @@ describe("Theme Configuration", () => {
       expect(serialized).toContain("var(--glas-kopf)");
       expect(serialized).toContain("var(--glas-rand)");
       // The background key styles the card div, not the page (the page mat is applied by the
-      // layout). It must carry the same frosted surface as the card key, because card.tsx puts
+      // layout). It must carry the same card surface as the card key, because card.tsx puts
       // both on one element and a bg-transparent here would win on stylesheet order.
       expect(APPEARANCE_STYLES.milchglas.background).toBe("bg-[var(--glas-karte)]");
     });

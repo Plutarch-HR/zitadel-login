@@ -41,7 +41,7 @@ export const getButtonClasses = (
       "box-border leading-36px text-14px inline-flex items-center focus-visible:outline-2 focus-visible:outline-[var(--indigo)] focus-visible:outline-offset-2 transition-colors transition-shadow duration-300": true,
       "disabled:border-none disabled:bg-none disabled:bg-gray-300 disabled:text-gray-600 disabled:shadow-none disabled:cursor-not-allowed disabled:dark:bg-gray-700 disabled:dark:text-gray-900":
         variant === ButtonVariants.Primary,
-      "bg-[linear-gradient(135deg,var(--indigo-tile-a),var(--indigo))] text-white shadow-[var(--schatten-indigo)] hover:brightness-108 active:scale-[0.96]":
+      "bg-[var(--indigo)] text-[var(--indigo-tile-text)] shadow-[var(--schatten-indigo)] hover:brightness-108 active:scale-[0.96]":
         variant === ButtonVariants.Primary && color !== ButtonColors.Warn,
       "bg-warn-light-500 dark:bg-warn-dark-500 hover:bg-warn-light-400 hover:dark:bg-warn-dark-400 text-white dark:text-white":
         variant === ButtonVariants.Primary && color === ButtonColors.Warn,

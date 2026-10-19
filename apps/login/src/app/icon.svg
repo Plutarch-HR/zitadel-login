@@ -1,6 +1,14 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 84">
-  <rect width="80" height="14" rx="2" fill="#23201B"/>
-  <rect x="6" y="14" width="16" height="66" rx="2" fill="#23201B"/>
-  <rect x="58" y="14" width="16" height="66" rx="2" fill="#23201B"/>
-  <circle cx="40" cy="64" r="7.5" fill="#1D7A68"/>
+  <style>.gate { fill: #202A35 } @media (prefers-color-scheme: dark) { .gate { fill: #EDF1F5 } }</style>
+  <defs>
+    <radialGradient id="dot" cx="30%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="#1E7BFF"/>
+      <stop offset="50%" stop-color="#C54DC3"/>
+      <stop offset="100%" stop-color="#E8521A"/>
+    </radialGradient>
+  </defs>
+  <rect width="80" height="14" rx="2" class="gate"/>
+  <rect x="6" y="14" width="16" height="66" rx="2" class="gate"/>
+  <rect x="58" y="14" width="16" height="66" rx="2" class="gate"/>
+  <circle cx="40" cy="64" r="7.5" fill="url(#dot)"/>
 </svg>
