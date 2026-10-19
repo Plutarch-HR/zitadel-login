@@ -29,14 +29,7 @@ function resolve(name: string, scheme: Record<string, string>, base: Record<stri
   if (value === undefined) throw new Error(`token ${name} is not defined in the token layer`);
   return value;
 }
-// The mat is a gradient stack whose last layer is the solid terminator the frosted
-// surfaces composite over. Parsed, never assumed.
-function matBackdrop(mat: string): string {
-  const m = mat.match(/linear-gradient\(\s*135deg\s*,\s*(#[0-9A-Fa-f]{6})/);
-  if (!m) throw new Error(`--glas-mat has no linear-gradient(135deg, #rrggbb ...) terminator: ${mat}`);
-  return m[1];
-}
-// WCAG relative luminance over sRGB; rgba composited over a solid backdrop first.
+// WCAG relative luminance over sRGB.
 function luminance(hex: string): number {
   if (!/^#[0-9A-Fa-f]{6}$/.test(hex)) throw new Error(`expected a 6 digit hex color, got ${hex}`);
   const [r, g, b] = [1, 3, 5]
@@ -44,21 +37,12 @@ function luminance(hex: string): number {
     .map((c) => (c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4));
   return 0.2126 * r + 0.7152 * g + 0.0722 * b;
 }
-function composite(rgba: string, backdropHex: string): string {
-  const m = rgba.match(/rgba\((\d+),\s*(\d+),\s*(\d+),\s*([\d.]+)\)/);
-  if (!m) throw new Error(`expected an rgba() surface, got ${rgba}`);
-  if (!/^#[0-9A-Fa-f]{6}$/.test(backdropHex)) throw new Error(`expected a 6 digit hex backdrop, got ${backdropHex}`);
-  const a = parseFloat(m[4]);
-  const bg = [1, 3, 5].map((i) => parseInt(backdropHex.slice(i, i + 2), 16));
-  const ch = [1, 2, 3].map((i, k) => Math.round(parseInt(m[i]) * a + bg[k] * (1 - a)));
-  return "#" + ch.map((c) => c.toString(16).padStart(2, "0")).join("");
-}
 const ratio = (fg: string, bg: string) => {
   const [l1, l2] = [luminance(fg), luminance(bg)].sort((x, y) => y - x);
   return (l1 + 0.05) / (l2 + 0.05);
 };
 
-describe("milchglas tokens", () => {
+describe("login token layer", () => {
   const { root, dark } = blocks(css());
   const light = vars(root);
   const darkV = vars(dark);
@@ -68,22 +52,33 @@ describe("milchglas tokens", () => {
     expect(Object.keys(darkV).length).toBeGreaterThan(10);
   });
   test("brand anchors are verbatim", () => {
-    expect(light["--indigo"]).toBe("#4F52C9");
-    expect(light["--gruenspan"]).toBe("#1D7A68");
-    expect(light["--glas-text"]).toBe("#1C1E2E");
+    expect(resolve("--indigo", light, light)).toBe("#2464D5");
+    expect(resolve("--glas-text", light, light)).toBe("#202A35");
+    expect(light["--agent-azur"]).toBe("#1E7BFF");
+    expect(light["--agent-glut"]).toBe("#E8521A");
   });
-  test("AA contrast: ink on composited glas-karte over the mat, light mode", () => {
-    const karte = composite(resolve("--glas-karte", light, light), matBackdrop(resolve("--glas-mat", light, light)));
-    expect(ratio(resolve("--glas-text", light, light), karte)).toBeGreaterThanOrEqual(4.5);
-    expect(ratio(resolve("--glas-gedimmt", light, light), karte)).toBeGreaterThanOrEqual(4.5);
-  });
-  test("AA contrast: ink on composited glas-karte, dark mode", () => {
-    const karte = composite(resolve("--glas-karte", darkV, light), matBackdrop(resolve("--glas-mat", darkV, light)));
-    expect(ratio(resolve("--glas-text", darkV, light), karte)).toBeGreaterThanOrEqual(4.5);
-  });
-  test("AA contrast: white on indigo primary action", () => {
-    expect(ratio("#FFFFFF", resolve("--indigo", light, light))).toBeGreaterThanOrEqual(4.5);
-  });
+  // Pearl & Graphite surfaces are opaque, so text is measured against the card colour itself.
+  for (const [mode, scheme] of [
+    ["light", light],
+    ["dark", darkV],
+  ] as const) {
+    test(`AA contrast: ink on the card, ${mode} mode`, () => {
+      const karte = resolve("--glas-karte", scheme, light);
+      expect(ratio(resolve("--glas-text", scheme, light), karte)).toBeGreaterThanOrEqual(4.5);
+      expect(ratio(resolve("--glas-gedimmt", scheme, light), karte)).toBeGreaterThanOrEqual(4.5);
+      expect(ratio(resolve("--indigo-text", scheme, light), karte)).toBeGreaterThanOrEqual(4.5);
+    });
+    test(`AA contrast: label on the primary action, ${mode} mode`, () => {
+      expect(
+        ratio(resolve("--indigo-tile-text", scheme, light), resolve("--indigo", scheme, light)),
+      ).toBeGreaterThanOrEqual(4.5);
+    });
+    test(`non-text contrast: focus ring and input border against the card, ${mode} mode`, () => {
+      const karte = resolve("--glas-karte", scheme, light);
+      expect(ratio(resolve("--indigo", scheme, light), karte)).toBeGreaterThanOrEqual(3);
+      expect(ratio(resolve("--glas-linie-stark", scheme, light), karte)).toBeGreaterThanOrEqual(3);
+    });
+  }
   test("no external origin anywhere in the token layer", () => {
     expect(css()).not.toMatch(/https?:\/\//);
   });
